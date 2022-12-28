@@ -1,0 +1,102 @@
+<!-- Complete two functions: updateFiles() and fileCount() -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Count </title>
+</head>
+<body>
+  <div>Select and submit your files </div><br>
+  <input id="fileList" type="file" name="myFiles" multiple onchange="updateFiles()">
+  <br>
+  <br>
+  Selected files: <span id="fileNum">0</span>;
+  Total size: <span id="fileSize">0</span>
+  <br><br>
+  <button onclick="fileCount()">Upload</button>
+  <br><br>
+  <div id = "session"></div>
+  <br>
+  <div id = "local"></div>
+  <br>
+  <script>
+    // if you want to reset the storage, you can use clear() method as below:
+    /* If you close the page and open it again, the number of uploaded files and size for
+    current session will be cleared and those for all sessions will remain */
+    //localStorage.clear();
+    sessionStorage.clear();
+
+    if (('sessionStorage' in window) && window['sessionStorage'] !== null) {
+      if (sessionStorage.numFiles  && sessionStorage.numKBs) {
+        document.getElementById('session').innerHTML = "In this session, you have uploaded "
+               +  sessionStorage.numFiles +" files with size " + sessionStorage.numKBs + " KB";
+      }
+      else{
+        document.getElementById('session').innerHTML = "In this session, you have uploaded " +
+               "0 files with size 0.00"  + " KB";
+      }
+    }
+
+    if (('localStorage' in window) && window['localStorage'] !== null) {
+      if (localStorage.numFiles && localStorage.numKBs) {
+
+        document.getElementById('local').innerHTML = "In total, you have uploaded "
+               +  localStorage.numFiles +" files with size " + localStorage.numKBs + " KB";
+      }
+      else{
+        document.getElementById('local').innerHTML = "In total, you have uploaded "
+               +  "0 files with size 0.00" +  " KB";
+      }
+    }
+
+    let num;
+    let totalSize = 0;
+
+    // complete these two functions
+    function updateFiles() {
+      /* Choose Files button is used to select your files.
+      Once you select the files, values of
+      Selected files and Total size will be updated immediately */
+      num = Number(document.getElementById('fileList').files.length);
+
+      for(let i = 0; i<num; i++){
+        totalSize += Number(document.getElementById('fileList').files[i].size);
+      }
+
+      totalSize /= 1000;
+      document.getElementById('fileNum').innerHTML = num;
+      document.getElementById('fileSize').innerHTML = totalSize + 'KB';
+    }
+
+    function fileCount() {
+      /*
+      Once you click Upload button
+      o Number of uploaded files and size will be updated for both current session (“In
+      this session, you …”) and for all sessions (“In total, you …”). Hint: use session
+      storage for current session and local storage for all sessions
+      o Values of Selected files, Total size and Choose Files button will be reset
+      */
+      sessionStorage.numFiles = num;
+      sessionStorage.numKBs = totalSize;
+      document.getElementById('session').innerHTML = "In this session, you have uploaded "
+             +  sessionStorage.numFiles +" files with size " + sessionStorage.numKBs + " KB";
+
+      if (localStorage.numFiles && localStorage.numKBs) {
+        localStorage.numFiles = Number(localStorage.numFiles) + Number(num);
+        localStorage.numKBs = Number(localStorage.numKBs) + Number(totalSize);
+      }
+      else{
+        localStorage.numFiles = Number(num);
+        localStorage.numKBs = Number(totalSize);
+      }
+
+      document.getElementById('local').innerHTML = "In total, you have uploaded "
+             +  localStorage.numFiles +" files with size " + localStorage.numKBs + " KB";
+
+      num = 0;
+      totalSize = 0;
+      document.getElementById('fileNum').innerHTML = num;
+      document.getElementById('fileSize').innerHTML = totalSize;
+    }
+  </script>
+</body>
+</html>
